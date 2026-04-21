@@ -1,5 +1,5 @@
 # 昆虫鉴别器 WebUI
-[![license](https://img.shields.io/badge/license-CC--BY--NC--ND-98c610.svg)](./LICENSE)
+[![license](https://img.shields.io/github/license/Genius-Society/insecta.svg)](./LICENSE)
 [![auto-sync](https://github.com/Genius-Society/insecta/actions/workflows/auto-sync.yml/badge.svg)](https://github.com/Genius-Society/insecta/actions/workflows/auto-sync.yml)
 [![hf](https://img.shields.io/badge/huggingface-insecta-ffd21e.svg)](https://huggingface.co/collections/Genius-Society/insecta)
 [![ms](https://img.shields.io/badge/modelscope-insecta-624aff.svg)](https://www.modelscope.cn/collections/Genius-Society/kunchongtujian)
