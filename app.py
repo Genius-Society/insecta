@@ -80,7 +80,12 @@ def infer(filename: str):
 
 
 if __name__ == "__main__":
-    with gr.Blocks() as demo:
+    with gr.Blocks() as app:
+        with gr.Accordion(label=_L("昆虫图鉴"), open=False):
+            gr.HTML(
+                """<iframe src="//player.bilibili.com/player.html?bvid=BV14krgYJE4B&autoplay=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="100%" style="aspect-ratio: 16 / 9;"></iframe>"""
+            )
+
         gr.Interface(
             fn=infer,
             inputs=gr.Image(label=_L("上传昆虫照片"), type="filepath"),
@@ -98,10 +103,4 @@ if __name__ == "__main__":
             cache_examples=False,
         )
 
-        gr.HTML(
-            """
-            <iframe src="//player.bilibili.com/player.html?bvid=BV14krgYJE4B&autoplay=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="100%" style="aspect-ratio: 16 / 9;"></iframe>
-            """
-        )
-
-    demo.launch(css="#gradio-share-link-button-0 { display: none; }", ssr_mode=False)
+    app.launch(css="#gradio-share-link-button-0 { display: none; }", ssr_mode=False)

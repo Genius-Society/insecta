@@ -25,6 +25,7 @@ ZH2EN = {
     "最可能的物种": "Best match",
     "图像文件格式支持 PNG, JPG, JPEG 和 BMP, 且文件大小不超过 10M": "Image file format support PNG, JPG, JPEG and BMP, and the file size does not exceed 10M.",
     "未知": "Unknown",
+    "昆虫图鉴": "Insect videos",
 }
 
 
