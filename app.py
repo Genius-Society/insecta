@@ -103,4 +103,8 @@ if __name__ == "__main__":
             cache_examples=False,
         )
 
-    app.launch(css="#gradio-share-link-button-0 { display: none; }", ssr_mode=False)
+    app.launch(
+        theme=gr.themes.Ocean(),
+        css="#gradio-share-link-button-0 { display: none; }",
+        ssr_mode=False,
+    )
