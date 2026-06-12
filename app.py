@@ -4,7 +4,7 @@ import numpy as np
 import gradio as gr
 from PIL import Image
 from insectid import InsectDetector, InsectIdentifier
-from utils import _L, MODEL_DIR, EN_US
+from utils import ZH2EN, MODEL_DIR, EN_US
 
 
 def infer(filename: str):
@@ -26,7 +26,7 @@ def infer(filename: str):
         image_for_draw = image.copy()
         image_height, image_width = image.shape[:2]
         boxes, confs, classes = detector.detect(image)
-        text = _L("未知")
+        text = i18n("未知")
         for box, _, _ in zip(boxes, confs, classes):
             box = box.astype(np.int32)
             box_width = box[2] - box[0] + 1
@@ -80,21 +80,25 @@ def infer(filename: str):
 
 
 if __name__ == "__main__":
+    i18n = gr.I18n(
+        zh={key: key for key in ZH2EN},
+        en=ZH2EN,
+    )
     with gr.Blocks() as app:
-        with gr.Accordion(label=_L("昆虫图鉴"), open=False):
+        with gr.Accordion(label=i18n("昆虫图鉴"), open=False):
             gr.HTML(
                 """<iframe src="//player.bilibili.com/player.html?bvid=BV14krgYJE4B&autoplay=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="100%" style="aspect-ratio: 16 / 9;"></iframe>"""
             )
 
         gr.Interface(
             fn=infer,
-            inputs=gr.Image(label=_L("上传昆虫照片"), type="filepath"),
+            inputs=gr.Image(label=i18n("上传昆虫照片"), type="filepath"),
             outputs=[
-                gr.Textbox(label=_L("状态栏"), buttons=["copy"]),
-                gr.Image(label=_L("识别结果"), buttons=["download", "fullscreen"]),
-                gr.Textbox(label=_L("最可能的物种"), buttons=["copy"]),
+                gr.Textbox(label=i18n("状态栏"), buttons=["copy"]),
+                gr.Image(label=i18n("识别结果"), buttons=["download", "fullscreen"]),
+                gr.Textbox(label=i18n("最可能的物种"), buttons=["copy"]),
             ],
-            title=_L("图像文件格式支持 PNG, JPG, JPEG 和 BMP, 且文件大小不超过 10M"),
+            title=i18n("图像文件格式支持 PNG, JPG, JPEG 和 BMP, 且文件大小不超过 10M"),
             examples=[
                 f"{MODEL_DIR}/examples/butterfly.jpg",
                 f"{MODEL_DIR}/examples/beetle.jpg",
@@ -107,4 +111,5 @@ if __name__ == "__main__":
         theme=gr.themes.Ocean(),
         css="#gradio-share-link-button-0 { display: none; }",
         ssr_mode=False,
+        i18n=i18n,
     )

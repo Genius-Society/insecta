@@ -27,7 +27,3 @@ ZH2EN = {
     "未知": "Unknown",
     "昆虫图鉴": "Insect videos",
 }
-
-
-def _L(zh_txt: str):
-    return ZH2EN[zh_txt] if EN_US else zh_txt
