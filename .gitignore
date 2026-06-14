@@ -1,7 +1,2 @@
-*__pycache__*
-_local/
-*.pyc
-local_models_*/
-rename.sh
-*.onnx
 test.*
+*__pycache__*

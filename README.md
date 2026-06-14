@@ -1,11 +1,30 @@
-# 昆虫鉴别器 WebUI
-[![license](https://img.shields.io/github/license/Genius-Society/insecta.svg)](./LICENSE)
-[![auto-sync](https://github.com/Genius-Society/insecta/actions/workflows/auto-sync.yml/badge.svg)](https://github.com/Genius-Society/insecta/actions/workflows/auto-sync.yml)
-[![hf](https://img.shields.io/badge/huggingface-insecta-ffd21e.svg)](https://huggingface.co/collections/Genius-Society/insecta)
-[![ms](https://img.shields.io/badge/modelscope-insecta-624aff.svg)](https://www.modelscope.cn/collections/Genius-Society/kunchongtujian)
+---
+license: CC-BY-NC-ND
+image:
+    image-classification:
+        size_scale:
+        - 100-1k
+tags:
+  - image-classification
+  - 图像分类
+  - 生物
+---
 
-支持 2037 类 (可能是目, 科, 属或种等) 昆虫或其他节肢动物；拖拽含有昆虫的图片进网页，点击提交即可识别；系统会自动定位并识别图像中的虫子, 也支持识别手工选择的虫子区域；图像文件格式支持 PNG, JPG, JPEG 和 BMP, 且文件大小不超过 10M；支持三种图像上传方式: 图像 URL; 本地图像拖曳上传; 本地图像对话框上传；系统返回可能性最高的物种, 结果包括其中文名, 学名和可信度。
+# 简介
+本“昆虫图鉴数据集”是一个高质量、经标准化处理的专业图像数据集，内含全面涵盖昆虫纲多个目、科、属、种的已脱敏JPG图片，每张图片均配有经昆虫学专家审定的中文名称及拉丁学名双重权威标签；该数据集严格遵循数据合规与隐私保护原则，移除了所有背景及元数据信息，专注于昆虫本体形态特征，旨在为计算机视觉领域的图像分类、目标检测、细粒度识别等模型训练与评估，以及生物多样性研究、数字标本馆建设、智能识别系统开发等多学科交叉应用，提供坚实、可靠且可直接使用的基准数据资源。
 
-## 致谢
-- <https://www.gradio.app>
-- <https://github.com/quarrying/quarrying-insect-id>
+## 使用
+:modelscope-code[]{type="sdk"}
+
+## 维护
+#### 跳过大文件
+```bash
+GIT_LFS_SKIP_SMUDGE=1 
+```
+
+:modelscope-code[]{type="git"}
+
+## 镜像
+<https://huggingface.co/datasets/Genius-Society/insecta>
+
+<div style="display:none">
