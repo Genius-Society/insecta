@@ -1,30 +1,66 @@
 import os
+import time
 import random
 import shutil
 import datasets
+import requests
 import subprocess
+from PIL import Image
+from tqdm import tqdm
+from io import BytesIO
 
 _HOME = f"https://www.modelscope.cn/datasets/Genius-Society/{os.path.basename(__file__)[:-3]}"
 
 _URL = "https://master.dl.sourceforge.net/project/git-large-file-storage.mirror/v3.7.1/git-lfs-linux-amd64-v3.7.1.tar.gz"
 
+# for sound
+_ENDPOINT = "https://www.missevan.com"
+
+_HEADER = {
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0"
+}
+
+# for video
+_BVID = "BV14krgYJE4B"
+
 
 class insecta(datasets.GeneratorBasedBuilder):
     def _info(self):
+        if self.config.name == "default":
+            self.config.name = "image"
+
+        if self.config.name == "image":
+            features = {
+                "image": datasets.Image(),
+                "label": datasets.Value("string"),
+                "latin": datasets.Value("string"),
+            }
+
+        elif self.config.name == "sound":
+            features = {
+                "audio": datasets.Value("string"),
+                "image": datasets.Image(),
+                "label": datasets.Value("string"),
+                "latin": datasets.Value("string"),
+            }
+
+        else:  # video
+            features = {
+                "video": datasets.Value("string"),
+                "image": datasets.Image(),
+                "duration": datasets.Value("duration[s]"),
+                "label": datasets.Value("string"),
+                "latin": datasets.Value("string"),
+            }
+
         return datasets.DatasetInfo(
-            features=datasets.Features(
-                {
-                    "image": datasets.Image(),
-                    "label": datasets.Value("string"),
-                    "latin": datasets.Value("string"),
-                }
-            ),
-            supervised_keys=("image", "latin"),
+            features=datasets.Features(features),
             license="CC-BY-NC-ND",
             version="0.0.1",
             homepage=_HOME,
         )
 
+    # for default
     def _git_lfs_installed(self):
         try:
             r = subprocess.run(
@@ -75,24 +111,92 @@ class insecta(datasets.GeneratorBasedBuilder):
             print(f"{e}, retrying...")
             self._clone_repo(repo_dir)
 
+    # for sound
+    def _get_sounds(self, drama_id=73247, page_size=100):
+        try:
+            response = requests.get(
+                f"{_ENDPOINT}/dramaapi/getdramaepisodedetails",
+                params={"drama_id": drama_id, "p": 1, "page_size": page_size},
+                headers=_HEADER,
+            )
+            response.raise_for_status()
+            return response.json()["info"]["Datas"]
+
+        except Exception as e:
+            print(f"{e}, retrying...")
+            time.sleep(random.randint(3, 5))
+            return self._get_sounds()
+
+    def _dld_img(self, url: str):
+        try:
+            response = requests.get(url, headers=_HEADER)
+            response.raise_for_status()
+            return Image.open(BytesIO(response.content))
+
+        except Exception as e:
+            print(f"{e}, retrying...")
+            return self._dld_img(url)
+
+    # for video
+    def _get_videos(self):
+        try:
+            response = requests.get(
+                "https://api.bilibili.com/x/player/pagelist",
+                params={"bvid": _BVID},
+                headers=_HEADER,
+            )
+            response.raise_for_status()
+            return response.json()["data"]
+
+        except Exception as e:
+            print(f"{e}, retrying...")
+            return self._get_videos()
+
     def _split_generators(self, dl_manager):
         dataset = []
-        repo_dir = self._fix_git_lfs()
-        data_dir = self._clone_repo(repo_dir)
-        for fpath in dl_manager.iter_files([data_dir]):
-            if fpath.lower().endswith(".jpg"):
-                dir_name: str = os.path.basename(os.path.dirname(fpath))
-                label, latin = dir_name.split(" ", 1)
+        if self.config.name == "image":
+            repo_dir = self._fix_git_lfs()
+            data_dir = self._clone_repo(repo_dir)
+            for fpath in dl_manager.iter_files([data_dir]):
+                if fpath.lower().endswith(".jpg"):
+                    dir_name: str = os.path.basename(os.path.dirname(fpath))
+                    label, latin = dir_name.split(" ", 1)
+                    dataset.append(
+                        {
+                            "image": fpath,
+                            "label": label.strip(),
+                            "latin": latin.strip(),
+                        }
+                    )
+
+        elif self.config.name == "sound":
+            files = self._get_sounds()
+            for file in tqdm(files, desc="Parsing classes"):
+                label, latin = str(file["soundstr"]).split(" ", 1)
                 dataset.append(
                     {
-                        "image": fpath,
+                        "audio": f"{_URL}/soundiframe/{file['id']}?type=small",
+                        "image": self._dld_img(file["front_cover"]),
+                        "label": label.strip(),
+                        "latin": latin.strip(),
+                    }
+                )
+
+        else:  # video
+            files = self._get_videos()
+            for file in tqdm(files, desc="Parsing classes"):
+                label, latin = str(file["part"]).split(" ", 1)
+                dataset.append(
+                    {
+                        "video": f"https://player.bilibili.com/player.html?bvid={_BVID}&p={file['page']}",
+                        "image": self._dld_img(file["first_frame"]),
+                        "duration": file["duration"],
                         "label": label.strip(),
                         "latin": latin.strip(),
                     }
                 )
 
         random.shuffle(dataset)
-
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
