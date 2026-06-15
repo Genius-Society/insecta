@@ -1,5 +1,4 @@
 ## 数据集: Genius-Society/insecta
-
 ```python
 from modelscope.msdatasets import MsDataset
 
