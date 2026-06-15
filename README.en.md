@@ -16,6 +16,11 @@ The Insecta Video Dataset is a multimodal video library designed for intelligent
 ## Supported classes
 [List of insects with included images](https://kakamond-insects.ms.show/viewer.html)
 
+## Environment
+```bash
+pip install datasets==3.6
+```
+
 ## Usage
 ```python
 from datasets import load_dataset

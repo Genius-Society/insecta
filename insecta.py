@@ -175,7 +175,7 @@ class insecta(datasets.GeneratorBasedBuilder):
                 label, latin = str(file["soundstr"]).split(" ", 1)
                 dataset.append(
                     {
-                        "audio": f"{_URL}/soundiframe/{file['id']}?type=small",
+                        "audio": f"{_ENDPOINT}/soundiframe/{file['id']}?type=small",
                         "image": self._dld_img(file["front_cover"]),
                         "label": label.strip(),
                         "latin": latin.strip(),
