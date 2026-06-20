@@ -107,16 +107,16 @@ class insecta(datasets.GeneratorBasedBuilder):
         subprocess.run(["git", "lfs", "install"], check=True)
         return f"{self._cache_downloaded_dir}/extracted/{os.path.basename(self._cache_dir)}"
 
-    def _clone_repo(self, repo_dir: str, repo_url: str = f"{_HOME}.git"):
+    def _clone_repo(self, repo_dir: str, repo_url=f"{_HOME}.git"):
         try:
             shutil.rmtree(repo_dir, ignore_errors=True)
-            os.makedirs(repo_dir)
+            os.makedirs(repo_dir, exist_ok=True)
             subprocess.run(["git", "clone", repo_url, repo_dir], check=True)
             return f"{repo_dir}/已鉴定"
 
         except Exception as e:
             print(f"{e}, retrying...")
-            self._clone_repo(repo_dir)
+            return self._clone_repo(repo_dir)
 
     # for sound
     def _get_sounds(self, drama_id=73247, page_size=100):
