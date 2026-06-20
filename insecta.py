@@ -25,14 +25,11 @@ _BVID = "BV14krgYJE4B"
 
 
 class insecta(datasets.GeneratorBasedBuilder):
-    BUILDER_CONFIGS = [
-        datasets.BuilderConfig(name="default", version="0.0.1"),
-        datasets.BuilderConfig(name="sound", version="0.0.1"),
-        datasets.BuilderConfig(name="video", version="0.0.1"),
-    ]
-
     def _info(self):
         if self.config.name == "default":
+            self.config.name = "image"
+
+        if self.config.name == "image":
             features = {
                 "image": datasets.Image(),
                 "label": datasets.Value("string"),
@@ -161,7 +158,7 @@ class insecta(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager):
         dataset = []
-        if self.config.name == "default":
+        if self.config.name == "image":
             repo_dir = self._fix_git_lfs()
             data_dir = self._clone_repo(repo_dir)
             for fpath in dl_manager.iter_files([data_dir]):
