@@ -25,6 +25,12 @@ _BVID = "BV14krgYJE4B"
 
 
 class insecta(datasets.GeneratorBasedBuilder):
+    BUILDER_CONFIGS = [
+        datasets.BuilderConfig(name="image", version="0.0.1"),
+        datasets.BuilderConfig(name="sound", version="0.0.1"),
+        datasets.BuilderConfig(name="video", version="0.0.1"),
+    ]
+
     def _info(self):
         if self.config.name == "default":
             self.config.name = "image"
