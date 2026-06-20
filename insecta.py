@@ -61,6 +61,7 @@ class insecta(datasets.GeneratorBasedBuilder):
 
         return datasets.DatasetInfo(
             features=datasets.Features(features),
+            config_name=self.config.name,
             license="CC-BY-NC-ND",
             version="0.0.1",
             homepage=_HOME,
