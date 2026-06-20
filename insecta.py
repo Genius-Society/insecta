@@ -26,16 +26,13 @@ _BVID = "BV14krgYJE4B"
 
 class insecta(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = [
-        datasets.BuilderConfig(name="image", version="0.0.1"),
+        datasets.BuilderConfig(name="default", version="0.0.1"),
         datasets.BuilderConfig(name="sound", version="0.0.1"),
         datasets.BuilderConfig(name="video", version="0.0.1"),
     ]
 
     def _info(self):
         if self.config.name == "default":
-            self.config.name = "image"
-
-        if self.config.name == "image":
             features = {
                 "image": datasets.Image(),
                 "label": datasets.Value("string"),
@@ -50,7 +47,7 @@ class insecta(datasets.GeneratorBasedBuilder):
                 "latin": datasets.Value("string"),
             }
 
-        else:  # video
+        elif self.config.name == "video":
             features = {
                 "video": datasets.Value("string"),
                 "image": datasets.Image(),
@@ -58,6 +55,9 @@ class insecta(datasets.GeneratorBasedBuilder):
                 "label": datasets.Value("string"),
                 "latin": datasets.Value("string"),
             }
+
+        else:
+            raise NameError("Invalid subset name!")
 
         return datasets.DatasetInfo(
             features=datasets.Features(features),

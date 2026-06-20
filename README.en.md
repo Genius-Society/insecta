@@ -27,7 +27,7 @@ from datasets import load_dataset
 
 ds = load_dataset(
     "Genius-Society/insecta",
-    name="default", # image / sound / video
+    name="default", # default / sound / video
     split="train",
     cache_dir="./__pycache__",
     trust_remote_code=True,
