@@ -161,7 +161,7 @@ class insecta(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager):
         dataset = []
-        if self.config.name == "image":
+        if self.config.name == "default":
             repo_dir = self._fix_git_lfs()
             data_dir = self._clone_repo(repo_dir)
             for fpath in dl_manager.iter_files([data_dir]):
