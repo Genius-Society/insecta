@@ -9,11 +9,25 @@ from PIL import Image
 from tqdm import tqdm
 from io import BytesIO
 
-_HOME = f"https://www.modelscope.cn/datasets/Genius-Society/{os.path.basename(__file__)[:-3]}"
+_ENDPOINT = "https://www.modelscope.cn/datasets/Genius-Society"
 
-_URL = "https://master.dl.sourceforge.net/project/git-large-file-storage.mirror/v3.7.1/git-lfs-linux-amd64-v3.7.1.tar.gz"
+_HOME = f"{_ENDPOINT}/{os.path.basename(__file__)[:-3]}"
+
+_URL = f"{_ENDPOINT}/latest_mirrors/resolve/master/gitlfs/git-lfs-linux-amd64.tar.gz"
 # for sound
-_ENDPOINT = "https://www.missevan.com"
+_ENDPOINT_FM = "https://www.missevan.com"
+
+
+def chrome_ver():
+    return requests.get(
+        f"{_ENDPOINT}/latest_mirrors/resolve/master/chrome/version"
+    ).text.split(".")[0]
+
+
+_HEADER = {
+    "User-Agent": f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{chrome_ver()}.0.0.0 Safari/537.36"
+}
+
 # for video
 _BVID = "BV14krgYJE4B"
 
@@ -21,7 +35,7 @@ _BVID = "BV14krgYJE4B"
 class insecta(datasets.GeneratorBasedBuilder):
     def _chrome_ver(self):
         return requests.get(
-            "https://www.modelscope.cn/models/Genius-Society/latest_mirrors/resolve/master/chrome/version"
+            f"{_ENDPOINT}/latest_mirrors/resolve/master/chrome/version"
         ).text.split(".")[0]
 
     def _header(self):
@@ -123,9 +137,9 @@ class insecta(datasets.GeneratorBasedBuilder):
     def _get_sounds(self, drama_id=73247, page_size=100):
         try:
             response = requests.get(
-                f"{_ENDPOINT}/dramaapi/getdramaepisodedetails",
+                f"{_ENDPOINT_FM}/dramaapi/getdramaepisodedetails",
                 params={"drama_id": drama_id, "p": 1, "page_size": page_size},
-                headers=self._header(),
+                headers=_HEADER,
             )
             response.raise_for_status()
             return response.json()["info"]["Datas"]
@@ -137,7 +151,7 @@ class insecta(datasets.GeneratorBasedBuilder):
 
     def _dld_img(self, url: str):
         try:
-            response = requests.get(url, headers=self._header())
+            response = requests.get(url, headers=_HEADER)
             response.raise_for_status()
             return Image.open(BytesIO(response.content))
 
@@ -151,7 +165,7 @@ class insecta(datasets.GeneratorBasedBuilder):
             response = requests.get(
                 "https://api.bilibili.com/x/player/pagelist",
                 params={"bvid": _BVID},
-                headers=self._header(),
+                headers=_HEADER,
             )
             response.raise_for_status()
             return response.json()["data"]
@@ -183,7 +197,7 @@ class insecta(datasets.GeneratorBasedBuilder):
                 label, latin = str(file["soundstr"]).split(" ", 1)
                 dataset.append(
                     {
-                        "audio": f"{_ENDPOINT}/soundiframe/{file['id']}?type=small",
+                        "audio": f"{_ENDPOINT_FM}/soundiframe/{file['id']}?type=small",
                         "image": self._dld_img(file["front_cover"]),
                         "label": label.strip(),
                         "latin": latin.strip(),
