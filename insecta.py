@@ -33,16 +33,6 @@ _BVID = "BV14krgYJE4B"
 
 
 class insecta(datasets.GeneratorBasedBuilder):
-    def _chrome_ver(self):
-        return requests.get(
-            f"{_ENDPOINT}/latest_mirrors/resolve/master/chrome/version"
-        ).text.split(".")[0]
-
-    def _header(self):
-        return {
-            "User-Agent": f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{self._chrome_ver()}.0.0.0 Safari/537.36"
-        }
-
     def _info(self):
         if self.config.name == "default":
             self.config.name = "image"
