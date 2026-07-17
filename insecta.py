@@ -8,7 +8,6 @@ import subprocess
 from PIL import Image
 from tqdm import tqdm
 from io import BytesIO
-from bs4 import BeautifulSoup
 
 _HOME = f"https://www.modelscope.cn/datasets/Genius-Society/{os.path.basename(__file__)[:-3]}"
 
@@ -18,27 +17,14 @@ _URL = "https://master.dl.sourceforge.net/project/git-large-file-storage.mirror/
 _ENDPOINT = "https://www.missevan.com"
 
 
-def latest_chrome_ver(url="https://googlechromelabs.github.io/chrome-for-testing"):
-    response = requests.get(url)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.text, "html.parser")
-    stable_th = soup.find("a", href="#stable")
-    if not stable_th:
-        raise LookupError("th not found!")
-    # 找到该 <th> 所在的 <tr>
-    tr = stable_th.find_parent("tr")
-    if not tr:
-        raise LookupError("tr not found!")
-    # 在该 <tr> 中获取第一个 <code> 的内容
-    code = tr.find("code")
-    if code:
-        return code.get_text(strip=True).split(".")[0]
-
-    raise LookupError("code not found!")
+def chrome_ver():
+    return requests.get(
+        "https://www.modelscope.cn/models/Genius-Society/latest_mirrors/resolve/master/chrome/version"
+    ).text.split(".")[0]
 
 
 _HEADER = {
-    "User-Agent": f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{latest_chrome_ver()}.0.0.0 Safari/537.36"
+    "User-Agent": f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{chrome_ver()}.0.0.0 Safari/537.36"
 }
 
 # for video
